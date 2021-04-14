@@ -50,7 +50,7 @@
                   placeholder="密码"
                   autocomplete="autocomplete"
                   type="password"
-                  v-decorator="['password', {rules: [{ required: true, message: '请输入密码', whitespace: true}]}]"
+                  v-decorator="['pwd', {rules: [{ required: true, message: '请输入密码', whitespace: true}]}]"
               >
                 <a-icon slot="prefix" type="lock" />
               </a-input>
@@ -71,6 +71,7 @@
 <script>
 import CommonLayout from '@/layouts/CommonLayout'
 import {loginByAccount, loginByPhone} from '@/services/admin'
+import md5 from 'js-md5';
 //import {setAuthorization} from '@/utils/request'
 //import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
@@ -101,12 +102,11 @@ export default {
           this.logging = true
           if(key == 'username'){
             const account = this.form.getFieldValue('account')
-            const password = this.form.getFieldValue('password')
+            const password = md5.base64(this.form.getFieldValue('password'))
             loginByAccount(account, password).then(this.afterLogin)
-            return;
           }else if(key == 'phone'){
             const phone = this.form.getFieldValue('phone')
-            const password = this.form.getFieldValue('password')
+            const password = this.form.getFieldValue('pwd')
             loginByPhone(phone, password).then(this.afterLogin)
           }
         }
@@ -114,25 +114,24 @@ export default {
     },
     afterLogin(res) {
       console.log(res);
-      return;
-      /*this.logging = false
+      this.logging = false
       const loginRes = res.data
       if (loginRes.code >= 0) {
         const {user, permissions, roles} = loginRes.data
         this.setUser(user)
         this.setPermissions(permissions)
         this.setRoles(roles)
-        setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
+        /*setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
         // 获取路由配置
         getRoutesConfig().then(result => {
           const routesConfig = result.data.data
           loadRoutes(routesConfig)
           this.$router.push('/dashboard/workplace')
           this.$message.success(loginRes.message, 3)
-        })
+        })*/
       } else {
         this.error = loginRes.message
-      }*/
+      }
     }
   }
 }
