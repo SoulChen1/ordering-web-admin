@@ -27,7 +27,7 @@
                 placeholder="密码"
                 autocomplete="autocomplete"
                 type="password"
-                v-decorator="['password', {rules: [{ required: true, message: '请输入密码', whitespace: true}]}]"
+                v-decorator="['password', {rules: [{required: true, message: '请输入密码', whitespace: true},{min: 6, max: 30, message: '密码长度应为6到30', whitespace: true}]}]"
               >
                 <a-icon slot="prefix" type="lock" />
               </a-input>
@@ -50,7 +50,7 @@
                   placeholder="密码"
                   autocomplete="autocomplete"
                   type="password"
-                  v-decorator="['pwd', {rules: [{ required: true, message: '请输入密码', whitespace: true}]}]"
+                  v-decorator="['pwd', {rules: [{ required: true, message: '请输入密码', whitespace: true},{min: 6, max: 30, message: '密码长度应为6到30', whitespace: true}]}]"
               >
                 <a-icon slot="prefix" type="lock" />
               </a-input>
@@ -102,11 +102,13 @@ export default {
           this.logging = true
           if(key == 'username'){
             const account = this.form.getFieldValue('account')
-            const password = md5.base64(this.form.getFieldValue('password'))
+            const password = md5.hex(this.form.getFieldValue('password'))
+            this.logging = false
             loginByAccount(account, password).then(this.afterLogin)
           }else if(key == 'phone'){
             const phone = this.form.getFieldValue('phone')
-            const password = this.form.getFieldValue('pwd')
+            const password = md5.hex(this.form.getFieldValue('pwd'))
+            this.logging = false
             loginByPhone(phone, password).then(this.afterLogin)
           }
         }
