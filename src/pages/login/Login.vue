@@ -72,7 +72,7 @@
 import CommonLayout from '@/layouts/CommonLayout'
 import {loginByAccount, loginByPhone} from '@/services/admin'
 import md5 from 'js-md5';
-//import {setAuthorization} from '@/utils/request'
+import {setAuthorization} from '@/utils/request'
 //import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 
@@ -103,12 +103,10 @@ export default {
           if(key == 'username'){
             const account = this.form.getFieldValue('account')
             const password = md5.hex(this.form.getFieldValue('password'))
-            this.logging = false
             loginByAccount(account, password).then(this.afterLogin)
           }else if(key == 'phone'){
             const phone = this.form.getFieldValue('phone')
             const password = md5.hex(this.form.getFieldValue('pwd'))
-            this.logging = false
             loginByPhone(phone, password).then(this.afterLogin)
           }
         }
@@ -119,9 +117,10 @@ export default {
       this.logging = false
       const loginRes = res.data
       if (loginRes.code >= 0) {
-        const {user, permissions, roles} = loginRes.data
-        this.setUser(user)
-        this.setPermissions(permissions)
+        const admin = loginRes.data;
+        const token = loginRes.token;
+        setAuthorization({token});
+        this.setUser(admin);
         this.setRoles(roles)
         /*setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
         // 获取路由配置
@@ -132,7 +131,7 @@ export default {
           this.$message.success(loginRes.message, 3)
         })*/
       } else {
-        this.error = loginRes.message
+        this.error = res.data
       }
     }
   }
