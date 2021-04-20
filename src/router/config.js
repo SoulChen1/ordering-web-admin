@@ -52,6 +52,24 @@ const options = {
           ]
         },
         {
+          path: 'product',
+          name: '商品管理',
+          meta: {
+            icon: 'rest',
+            page: {
+              cacheAble: false
+            }
+          },
+          component: PageView,
+          children: [
+            {
+              path: 'list',
+              name: '商品列表',
+              component: () => import('@/pages/product/ProductList')
+            }
+          ]
+        },
+        {
           path: 'form',
           name: '表单页',
           meta: {
@@ -91,7 +109,7 @@ const options = {
               path: 'query',
               name: '查询表格',
               meta: {
-                authority: 'queryForm',
+                authority: 'admin',
               },
               component: () => import('@/pages/list/QueryList'),
             },
@@ -225,7 +243,7 @@ const options = {
           meta: {
             icon: 'file-excel',
             authority: {
-              permission: 'form'
+              permission: 'admin'
             }
           },
           component: () => import('@/pages/form/basic')

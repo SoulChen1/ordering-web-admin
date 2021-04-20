@@ -73,7 +73,7 @@ import CommonLayout from '@/layouts/CommonLayout'
 import {loginByAccount, loginByPhone} from '@/services/admin'
 import md5 from 'js-md5';
 import {setAuthorization} from '@/utils/request'
-//import {loadRoutes} from '@/utils/routerUtil'
+import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
 
 export default {
@@ -116,22 +116,28 @@ export default {
       console.log(res);
       this.logging = false
       const loginRes = res.data
-      if (loginRes.code >= 0) {
+      if (loginRes.code == 0) {
         const admin = loginRes.data;
         const token = loginRes.token;
-        setAuthorization({token});
         this.setUser(admin);
-        this.setRoles(roles)
-        /*setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
+        if(admin.is_admin == 1){
+          this.setPermissions([{id:'admin'}]);
+        }else{
+          this.setPermissions([{id:'admin'}]);
+        }
+        setAuthorization({token});
         // 获取路由配置
-        getRoutesConfig().then(result => {
+        /*getRoutesConfig().then(result => {
           const routesConfig = result.data.data
           loadRoutes(routesConfig)
           this.$router.push('/dashboard/workplace')
           this.$message.success(loginRes.message, 3)
         })*/
+        loadRoutes();
+        this.$router.push('/dashboard/analysis')
+        this.$message.success('登录成功!', 3)
       } else {
-        this.error = res.data
+        this.error = loginRes.message
       }
     }
   }
